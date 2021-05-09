@@ -1,3 +1,6 @@
+12.4.1
+  - fix equity calculation
+
 12.4.0
   - added clientId to query websocket url
   - bugfix for unsubscribeFromMarketData API
