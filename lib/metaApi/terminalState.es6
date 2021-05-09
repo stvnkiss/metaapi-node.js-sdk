@@ -237,29 +237,23 @@ export default class TerminalState extends SynchronizationListener {
 
   /**
    * Invoked when a symbol specification was updated
-   * @param {Number} instanceIndex index of an account instance connected
-   * @param {MetatraderSymbolSpecification} specification updated MetaTrader symbol specification
+   * @param {Number} instanceIndex index of account instance connected
+   * @param {Array<MetatraderSymbolSpecification>} specifications updated specifications
+   * @param {Array<String>} removedSymbols removed symbols
    */
-  onSymbolSpecificationUpdated(instanceIndex, specification) {
+  onSymbolSpecificationsUpdated(instanceIndex, specifications, removedSymbols) {
     let state = this._getState(instanceIndex);
-    let index = state.specifications.findIndex(s => s.symbol === specification.symbol);
-    if (index !== -1) {
-      state.specifications[index] = specification;
-    } else {
-      state.specifications.push(specification);
+    for (let specification of specifications) {
+      let index = state.specifications.findIndex(s => s.symbol === specification.symbol);
+      if (index !== -1) {
+        state.specifications[index] = specification;
+      } else {
+        state.specifications.push(specification);
+      }
+      state.specificationsBySymbol[specification.symbol] = specification;
     }
-    state.specificationsBySymbol[specification.symbol] = specification;
-  }
-
-  /**
-   * Invoked when a symbol specifications was removed
-   * @param {Number} instanceIndex index of an account instance connected
-   * @param {Array<String>} symbols removed symbols
-   */
-  async onSymbolSpecificationsRemoved(instanceIndex, symbols) {
-    let state = this._getState(instanceIndex);
-    state.specifications = state.specifications.filter(s => !symbols.includes(s.symbol));
-    for (let symbol of symbols) {
+    state.specifications = state.specifications.filter(s => !removedSymbols.includes(s.symbol));
+    for (let symbol of removedSymbols) {
       delete state.specificationsBySymbol[symbol];
     }
   }
@@ -299,13 +293,20 @@ export default class TerminalState extends SynchronizationListener {
       }
       for (let order of orders) {
         order.currentPrice = order.type === 'ORDER_TYPE_BUY' || order.type === 'ORDER_TYPE_BUY_LIMIT' ||
-          order.type === 'ORDER_TYPE_BUY_STOP' || order.type === 'ORDER_TYPE_BUY_STOP_LIMIT' ? price.ask : price.bid;
+        order.type === 'ORDER_TYPE_BUY_STOP' || order.type === 'ORDER_TYPE_BUY_STOP_LIMIT' ? price.ask : price.bid;
       }
     }
     if (state.accountInformation) {
       if (state.positionsInitialized && pricesInitialized) {
-        state.accountInformation.equity = state.accountInformation.balance +
-          state.positions.reduce((acc, p) => acc + p.unrealizedProfit, 0);
+        if (state.accountInformation.platform === 'mt5') {
+          state.accountInformation.equity = state.accountInformation.balance +
+            state.positions.reduce((acc, p) => acc +
+              Math.round((p.unrealizedProfit || 0) * 100) / 100 + Math.round((p.swap || 0) * 100) / 100, 0);
+        } else {
+          state.accountInformation.equity = state.accountInformation.balance +
+            state.positions.reduce((acc, p) => acc + Math.round((p.profit || 0) * 100) / 100, 0);
+        }
+        state.accountInformation.equity = Math.round(state.accountInformation.equity * 100) / 100;
       } else {
         state.accountInformation.equity = equity !== undefined ? equity : state.accountInformation.equity;
       }
@@ -319,11 +320,16 @@ export default class TerminalState extends SynchronizationListener {
   // eslint-disable-next-line complexity
   _updatePositionProfits(position, price) {
     let specification = this.specification(position.symbol);
+    let multiplier = Math.pow(10, specification.digits);
     if (specification) {
+      if (position.profit !== undefined) {
+        position.profit = Math.round(position.profit * multiplier) / multiplier;
+      }
       if (position.unrealizedProfit === undefined || position.realizedProfit === undefined) {
         position.unrealizedProfit = (position.type === 'POSITION_TYPE_BUY' ? 1 : -1) *
           (position.currentPrice - position.openPrice) * position.currentTickValue *
           position.volume / specification.tickSize;
+        position.unrealizedProfit = Math.round(position.unrealizedProfit * multiplier) / multiplier;
         position.realizedProfit = position.profit - position.unrealizedProfit;
       }
       let newPositionPrice = position.type === 'POSITION_TYPE_BUY' ? price.bid : price.ask;
@@ -332,13 +338,15 @@ export default class TerminalState extends SynchronizationListener {
       let unrealizedProfit = (position.type === 'POSITION_TYPE_BUY' ? 1 : -1) *
         (newPositionPrice - position.openPrice) * currentTickValue *
         position.volume / specification.tickSize;
+      unrealizedProfit = Math.round(unrealizedProfit * multiplier) / multiplier;
       position.unrealizedProfit = unrealizedProfit;
       position.profit = position.unrealizedProfit + position.realizedProfit;
+      position.profit = Math.round(position.profit * multiplier) / multiplier;
       position.currentPrice = newPositionPrice;
       position.currentTickValue = currentTickValue;
     }
   }
-  
+
   _getState(instanceIndex) {
     if (!this._stateByInstanceIndex['' + instanceIndex]) {
       this._stateByInstanceIndex['' + instanceIndex] = this._constructTerminalState();
@@ -375,5 +383,5 @@ export default class TerminalState extends SynchronizationListener {
     }
     return result || this._constructTerminalState();
   }
-  
+
 }
