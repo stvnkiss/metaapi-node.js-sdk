@@ -1,3 +1,6 @@
+12.4.2
+  - do not query specification fields until it is received in TerminalState
+
 12.4.1
   - fix equity calculation
 
