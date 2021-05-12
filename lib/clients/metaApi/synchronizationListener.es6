@@ -148,21 +148,12 @@ export default class SynchronizationListener {
   async onSymbolSpecificationUpdated(instanceIndex, specification) {}
 
   /**
-   * Invoked when a symbol specification was removed
+   * Invoked when a symbol specifications was removed
    * @param {Number} instanceIndex index of an account instance connected
-   * @param {String} symbol removed symbol
-   * @returns {Promise} promise which resolves when the asynchronous event is processed
+   * @param {Array<String>} symbols removed symbols
+   * @returns {Promise<void>} promise which resolves when the asynchronous event is processed
    */
-  async onSymbolSpecificationRemoved(instanceIndex, symbol) {}
-
-  /**
-   * Invoked when a symbol specifications were updated
-   * @param {Number} instanceIndex index of account instance connected
-   * @param {Array<MetatraderSymbolSpecification>} specifications updated specifications
-   * @param {Array<String>} removedSymbols removed symbols
-   * @return {Promise} promise which resolves when the asynchronous event is processed
-   */
-  async onSymbolSpecificationsUpdated(instanceIndex, specifications, removedSymbols) {}
+  async onSymbolSpecificationsRemoved(instanceIndex, symbols) {}
 
   /**
    * Invoked when a symbol price was updated
@@ -184,7 +175,7 @@ export default class SynchronizationListener {
    * @return {Promise} promise which resolves when the asynchronous event is processed
    */
   async onSymbolPricesUpdated(instanceIndex, prices, equity, margin, freeMargin, marginLevel,
-                              accountCurrencyExchangeRate) {}
+    accountCurrencyExchangeRate) {}
 
   /**
    * Invoked when symbol candles were updated
@@ -198,7 +189,7 @@ export default class SynchronizationListener {
    * @return {Promise} promise which resolves when the asynchronous event is processed
    */
   async onCandlesUpdated(instanceIndex, candles, equity, margin, freeMargin, marginLevel,
-                         accountCurrencyExchangeRate) {}
+    accountCurrencyExchangeRate) {}
 
   /**
    * Invoked when symbol ticks were updated
@@ -212,7 +203,7 @@ export default class SynchronizationListener {
    * @return {Promise} promise which resolves when the asynchronous event is processed
    */
   async onTicksUpdated(instanceIndex, ticks, equity, margin, freeMargin, marginLevel,
-                       accountCurrencyExchangeRate) {}
+    accountCurrencyExchangeRate) {}
 
   /**
    * Invoked when order books were updated
@@ -226,7 +217,7 @@ export default class SynchronizationListener {
    * @return {Promise} promise which resolves when the asynchronous event is processed
    */
   async onBooksUpdated(instanceIndex, books, equity, margin, freeMargin, marginLevel,
-                       accountCurrencyExchangeRate) {}
+    accountCurrencyExchangeRate) {}
 
   /**
    * Invoked when subscription downgrade has occurred
