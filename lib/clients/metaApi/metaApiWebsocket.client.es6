@@ -1493,37 +1493,26 @@ export default class MetaApiWebsocketClient {
           }
           await Promise.all(onSubscriptionDowngradePromises);
         } else if (data.type === 'specifications') {
-          const onSymbolSpecificationsUpdatedPromises = [];
-          for (let listener of this._synchronizationListeners[data.accountId] || []) {
-            onSymbolSpecificationsUpdatedPromises.push(
-              Promise.resolve(listener.onSymbolSpecificationsUpdated(instanceIndex, data.specifications || [],
-                data.removedSymbols || []))
-              // eslint-disable-next-line no-console
-                .catch(err => console.error(`${data.accountId}: Failed to notify listener about specifications ` +
-                  'updated event', err))
-            );
-          }
-          await Promise.all(onSymbolSpecificationsUpdatedPromises);
           for (let specification of (data.specifications || [])) {
             const onSymbolSpecificationUpdatedPromises = [];
             for (let listener of this._synchronizationListeners[data.accountId] || []) {
               onSymbolSpecificationUpdatedPromises.push(
                 Promise.resolve(listener.onSymbolSpecificationUpdated(instanceIndex, specification))
                 // eslint-disable-next-line no-console
-                  .catch(err => console.error(`${data.accountId}: Failed to notify listener about specification ` +
-                    'updated event', err))
+                  .catch(err => console.error(`${data.accountId}: Failed to notify listener about specifications event`,
+                    err))
               );
             }
             await Promise.all(onSymbolSpecificationUpdatedPromises);
           }
-          for (let removedSymbol of (data.removedSymbols || [])) {
+          if (data.removedSymbols) {
             const onSymbolSpecificationRemovedPromises = [];
             for (let listener of this._synchronizationListeners[data.accountId] || []) {
               onSymbolSpecificationRemovedPromises.push(
-                Promise.resolve(listener.onSymbolSpecificationRemoved(instanceIndex, removedSymbol))
-                // eslint-disable-next-line no-console
-                  .catch(err => console.error(`${data.accountId}: Failed to notify listener about ` +
-                    'specifications removed event', err))
+                Promise.resolve(listener.onSymbolSpecificationsRemoved(instanceIndex, data.removedSymbols))
+                  // eslint-disable-next-line no-console
+                  .catch(err => console.error(`${data.accountId}: Failed to notify listener about specifications ` +
+                    'removed event', err))
               );
             }
             await Promise.all(onSymbolSpecificationRemovedPromises);
