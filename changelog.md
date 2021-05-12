@@ -1,3 +1,6 @@
+12.4.3
+  - fix specifications synchronization bug introduced in 12.4.1
+
 12.4.2
   - do not query specification fields until it is received in TerminalState
 
