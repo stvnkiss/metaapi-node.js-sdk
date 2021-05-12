@@ -235,25 +235,32 @@ export default class TerminalState extends SynchronizationListener {
     }
   }
 
+
   /**
    * Invoked when a symbol specification was updated
-   * @param {Number} instanceIndex index of account instance connected
-   * @param {Array<MetatraderSymbolSpecification>} specifications updated specifications
-   * @param {Array<String>} removedSymbols removed symbols
+   * @param {Number} instanceIndex index of an account instance connected
+   * @param {MetatraderSymbolSpecification} specification updated MetaTrader symbol specification
    */
-  onSymbolSpecificationsUpdated(instanceIndex, specifications, removedSymbols) {
+  onSymbolSpecificationUpdated(instanceIndex, specification) {
     let state = this._getState(instanceIndex);
-    for (let specification of specifications) {
-      let index = state.specifications.findIndex(s => s.symbol === specification.symbol);
-      if (index !== -1) {
-        state.specifications[index] = specification;
-      } else {
-        state.specifications.push(specification);
-      }
-      state.specificationsBySymbol[specification.symbol] = specification;
+    let index = state.specifications.findIndex(s => s.symbol === specification.symbol);
+    if (index !== -1) {
+      state.specifications[index] = specification;
+    } else {
+      state.specifications.push(specification);
     }
-    state.specifications = state.specifications.filter(s => !removedSymbols.includes(s.symbol));
-    for (let symbol of removedSymbols) {
+    state.specificationsBySymbol[specification.symbol] = specification;
+  }
+
+  /**
+   * Invoked when a symbol specifications was removed
+   * @param {Number} instanceIndex index of an account instance connected
+   * @param {Array<String>} symbols removed symbols
+   */
+  async onSymbolSpecificationsRemoved(instanceIndex, symbols) {
+    let state = this._getState(instanceIndex);
+    state.specifications = state.specifications.filter(s => !symbols.includes(s.symbol));
+    for (let symbol of symbols) {
       delete state.specificationsBySymbol[symbol];
     }
   }
