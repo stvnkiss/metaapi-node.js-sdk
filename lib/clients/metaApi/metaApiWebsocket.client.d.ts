@@ -26,7 +26,7 @@ export default class MetaApiWebsocketClient {
    * @param {Object} packet packet data
    * @param {Date} receivedAt time the packet was received at
    */
-   onOutOfOrderPacket(accountId: String, instanceIndex: Number, expectedSequenceNumber: Number, actualSequenceNumber: Number, packet: Object, receivedAt: Date);
+   onOutOfOrderPacket(accountId: String, instanceIndex: Number, expectedSequenceNumber: Number, actualSequenceNumber: Number, packet: Object, receivedAt: Date): void;
   
    /**
    * Patch server URL for use in unit tests
@@ -72,7 +72,7 @@ export default class MetaApiWebsocketClient {
    * @param {Number} socketInstanceIndex socket instance index
    * @param {TooManyRequestsErrorMetadata} metadata TooManyRequestsError metadata
    */
-  lockSocketInstance(socketInstanceIndex: Number, metadata: TooManyRequestsErrorMetadata);
+  lockSocketInstance(socketInstanceIndex: Number, metadata: TooManyRequestsErrorMetadata): Promise<void>;
   
   /**
    * Connects to MetaApi server via socket.io protocol
@@ -83,7 +83,7 @@ export default class MetaApiWebsocketClient {
   /**
    * Closes connection to MetaApi server
    */
-  close();
+  close(): void;
   
   /**
    * Returns account information for a specified MetaTrader account (see
@@ -218,7 +218,7 @@ export default class MetaApiWebsocketClient {
    * @param {String} accountId account id to subscribe
    * @param {Number} [instanceNumber] instance index number
    */
-  ensureSubscribe(accountId: String, instanceNumber: Number);
+  ensureSubscribe(accountId: String, instanceNumber: Number): void;
   
   /**
    * Subscribes to the Metatrader terminal events (see https://metaapi.cloud/docs/client/websocket/api/subscribe/).
@@ -283,7 +283,7 @@ export default class MetaApiWebsocketClient {
    * @param {Number} instanceNumber instance index number
    * @param {Array} subscriptions array of subscriptions to refresh
    */
-  refreshMarketDataSubscriptions(accountId: String, instanceNumber: Number, subscriptions: Array<MarketDataSubscription>);
+  refreshMarketDataSubscriptions(accountId: String, instanceNumber: Number, subscriptions: Array<MarketDataSubscription>): Promise<any>;
   
   /**
    * Unsubscribes from market data of specified symbol (see
@@ -385,57 +385,57 @@ export default class MetaApiWebsocketClient {
    * @param {String} accountId account id
    * @param {SynchronizationListener} listener synchronization listener to add
    */
-  addSynchronizationListener(accountId: String, listener: SynchronizationListener);
+  addSynchronizationListener(accountId: String, listener: SynchronizationListener): void;
   
   /**
    * Removes synchronization listener for specific account
    * @param {String} accountId account id
    * @param {SynchronizationListener} listener synchronization listener to remove
    */
-  removeSynchronizationListener(accountId: String, listener: SynchronizationListener);
+  removeSynchronizationListener(accountId: String, listener: SynchronizationListener): void;
   
   /**
    * Adds latency listener
    * @param {LatencyListener} listener latency listener to add
    */
-  addLatencyListener(listener: LatencyListener);
+  addLatencyListener(listener: LatencyListener): void;
   
   /**
    * Removes latency listener
    * @param {LatencyListener} listener latency listener to remove
    */
-  removeLatencyListener(listener: LatencyListener);
+  removeLatencyListener(listener: LatencyListener): void;
   
   /**
    * Adds reconnect listener
    * @param {ReconnectListener} listener reconnect listener to add
    * @param {String} accountId account id of listener
    */
-  addReconnectListener(listener: ReconnectListener, accountId: String);
+  addReconnectListener(listener: ReconnectListener, accountId: String): void;
   
   /**
    * Removes reconnect listener
    * @param {ReconnectListener} listener listener to remove
    */
-  removeReconnectListener(listener: ReconnectListener);
+  removeReconnectListener(listener: ReconnectListener): void;
   
   /**
    * Removes all listeners. Intended for use in unit tests.
    */
-  removeAllListeners();
+  removeAllListeners(): void;
   
   /**
    * Queues an account packet for processing
    * @param {Object} packet packet to process
    */
-  queuePacket(packet: Object);
+  queuePacket(packet: Object): any;
   
   /**
    * Queues account event for processing
    * @param {String} accountId account id
    * @param {Promise} event event to execute
    */
-  queueEvent(accountId: String, event: Promise<any>);
+  queueEvent(accountId: String, event: Promise<any>): any;
   
   /**
    * Makes a RPC request
@@ -443,7 +443,7 @@ export default class MetaApiWebsocketClient {
    * @param {Object} request base request data
    * @param {Number} [timeoutInSeconds] request timeout in seconds
    */
-  rpcRequest(accountId: String, request: Object, timeoutInSeconds: Number);
+  rpcRequest(accountId: String, request: Object, timeoutInSeconds: Number): Promise<any>;
 }
 
 /**

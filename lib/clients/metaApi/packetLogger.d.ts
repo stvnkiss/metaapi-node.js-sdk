@@ -34,12 +34,12 @@ export default class PacketLogger {
   /**
    * Initializes the packet logger
    */
-  start();
+  start(): any;
   
   /**
    * Deinitializes the packet logger
    */
-  stop();  
+  stop(): any;
 }
 
 /**

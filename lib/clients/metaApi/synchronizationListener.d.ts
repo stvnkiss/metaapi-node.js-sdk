@@ -9,13 +9,13 @@ export default class SynchronizationListener {
    * Returns instance number of instance index
    * @param {String} instanceIndex instance index
    */
-  getInstanceNumber(instanceIndex: String);
+  getInstanceNumber(instanceIndex: String): Number | undefined;
   
   /**
    * Returns host name of instance index
    * @param {String} instanceIndex instance index
    */
-  getHostName(instanceIndex: String);
+  getHostName(instanceIndex: String): string | undefined;
   
   /**
    * Invoked when connection to MetaTrader terminal established
@@ -106,7 +106,7 @@ export default class SynchronizationListener {
    * @param {Array<MetatraderOrder>} orders updated array of pending orders
    * @return {Promise} promise which resolves when the asynchronous event is processed
    */
-  onPendingOrdersReplaced(instanceIndex: String, orders: Array<MetatraderOrder>);
+  onPendingOrdersReplaced(instanceIndex: String, orders: Array<MetatraderOrder>): Promise<any>;
   
   /**
    * Invoked when MetaTrader pending order is updated
@@ -270,7 +270,7 @@ export default class SynchronizationListener {
    * Invoked when a stream for an instance index is closed
    * @param {String} instanceIndex index of an account instance connected
    */
-   onStreamClosed(instanceIndex: String);
+   onStreamClosed(instanceIndex: String): Promise<any>;
 }
 
 /**

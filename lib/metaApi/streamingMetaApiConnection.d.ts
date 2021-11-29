@@ -136,13 +136,13 @@ export default class StreamingMetaApiConnection extends MetaApiConnection {
    * Adds synchronization listener
    * @param {SynchronizationListener} listener synchronization listener to add
    */
-  addSynchronizationListener(listener: SynchronizationListener);
+  addSynchronizationListener(listener: SynchronizationListener): void;
   
   /**
    * Removes synchronization listener for specific account
    * @param {SynchronizationListener} listener synchronization listener to remove
    */
-  removeSynchronizationListener(listener: SynchronizationListener);
+  removeSynchronizationListener(listener: SynchronizationListener): void;
   
   /**
    * Invoked when connection to MetaTrader terminal established
@@ -156,7 +156,7 @@ export default class StreamingMetaApiConnection extends MetaApiConnection {
    * Invoked when connection to MetaTrader terminal terminated
    * @param {String} instanceIndex index of an account instance connected
    */
-  onDisconnected(instanceIndex: String);
+  onDisconnected(instanceIndex: String): Promise<any>;
   
   /**
    * Invoked when a synchronization of history deals on a MetaTrader account have finished to indicate progress of an
@@ -219,7 +219,7 @@ export default class StreamingMetaApiConnection extends MetaApiConnection {
   /**
    * Closes the connection. The instance of the class should no longer be used after this method is invoked.
    */
-  close();
+  close(): Promise<void>;
   
   /**
    * Returns synchronization status
