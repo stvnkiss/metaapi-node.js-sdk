@@ -449,7 +449,7 @@ export default class MetaApiWebsocketClient {
 /**
  * MetaTrader account information (see https://metaapi.cloud/docs/client/models/metatraderAccountInformation/)
  */
-declare type MetatraderAccountInformation = {
+export declare type MetatraderAccountInformation = {
 
   /**
    * platform id (mt4 or mt5)
